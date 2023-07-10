@@ -11,24 +11,30 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     @IBOutlet var table: UITableView!
     
+    var weatherModel = [Weather]()
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        <#code#>
+        return weatherModel.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        <#code#>
+        return UITableViewCell()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // Do any additional setup after loading the view.
-
-
+        table.delegate = self
+        table.dataSource = self
 
 
     }
+    
 
 
 }
 
+struct Weather {
+    
+}
