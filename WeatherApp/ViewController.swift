@@ -14,8 +14,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     var weatherModel = [Weather]()
     let locationManager = CLLocationManager()
-    var coordinates: CLLocation?
-
+    var currentLocations: CLLocation?
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,14 +25,31 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // Do any additional setup after loading the view.
         table.delegate = self
         table.dataSource = self
-
-
+        
+        setupLocation()
+         
     }
     
-//    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-//        
-//    }
-//    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        if !locations.isEmpty, currentLocations == nil {
+            currentLocations = locations.first
+            locationManager.stopUpdatingLocation()
+            requestionLocationForWeather()
+        }
+    }
+    
+    func requestionLocationForWeather(){
+        
+        guard let currentLocations = currentLocations else {
+            return
+        }
+        
+        let long = currentLocations.coordinate.longitude
+        let lat = currentLocations.coordinate.latitude
+    }
+
+        
+    
     func setupLocation(){
         locationManager.delegate = self
         locationManager.requestWhenInUseAuthorization()
