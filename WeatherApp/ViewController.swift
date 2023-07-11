@@ -25,8 +25,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // Do any additional setup after loading the view.
         table.delegate = self
         table.dataSource = self
-        
+
         setupLocation()
+        dump(Weather.self)
          
     }
     
@@ -44,8 +45,44 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             return
         }
         
+        
         let long = currentLocations.coordinate.longitude
         let lat = currentLocations.coordinate.latitude
+
+        
+        let url = "https://api.tomorrow.io/v4/timelines?location=\(lat),\(long)&fields=temperature&timesteps=1h&units=metric&apikey=fm3FfjFr9iuu6ZQ3PrsBi5NdBkQ700EL"
+        
+        URLSession.shared.dataTask(with: URL(string: url)!, completionHandler: { data, response, error in
+            guard let data = data else {
+                print("Something didn't happen")
+                return
+            }
+            
+            var json: Weather?
+            do {
+                json = try JSONDecoder().decode(Weather.self, from: data)
+                
+            } catch {
+                print("Error: \(error)")
+            }
+            
+            
+            guard let error = error else {
+                print("Error: \(error)")
+                return
+            }
+            
+            guard let result = json else {
+                print("Results \(json)")
+                return
+            }
+            
+            DispatchQueue.main.async {
+                self.table.reloadData()
+            }
+          
+        }).resume()
+        
     }
 
         
@@ -67,8 +104,25 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
 
 
+
 }
 
-struct Weather {
-    
+struct Weather: Codable {
+    let data: [timelines]
+}
+
+struct timelines: Codable {
+    let timestep: String
+    let endTime: String
+    let startTime: String
+    let intervals: [IntervalsWeather]
+}
+
+struct IntervalsWeather: Codable {
+    let startTime: String
+    let values: [TemperatureWeather]
+}
+
+    struct TemperatureWeather: Codable {
+    let temperature: Float
 }
