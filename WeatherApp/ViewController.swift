@@ -12,7 +12,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     @IBOutlet var table: UITableView!
     
-    var weatherModel = [DataClass]()
+    var weatherModel = [Apitesting]()
     let locationManager = CLLocationManager()
     var currentLocations: CLLocation?
     
@@ -49,28 +49,31 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         let long = currentLocations.coordinate.longitude
         let lat = currentLocations.coordinate.latitude
 
-        
-        guard let url = URL(string: "https://api.tomorrow.io/v4/timelines?location=40.75872069597532,-73.98529171943665&fields=temperature&timesteps=1h&units=metric&apikey=fm3FfjFr9iuu6ZQ3PrsBi5NdBkQ700EL") else {
-            print("Not working")
-            return
-        }
+//    https://api.tomorrow.io/v4/timelines?location=40.75872069597532,-73.98529171943665&fields=temperature&timesteps=1h&units=metric&apikey=fm3FfjFr9iuu6ZQ3PrsBi5NdBkQ700EL
+    let url = URL(string: "https://nba-stats-db.herokuapp.com/api/playerdata/name/JaysonTatum")
         
         
 //        "https://api.tomorrow.io/v4/timelines?location=\(lat),\(long)&fields=temperature&timesteps=1h&units=metric&apikey=fm3FfjFr9iuu6ZQ3PrsBi5NdBkQ700EL"
         
-        URLSession.shared.dataTask(with: url, completionHandler: { [weak self] data, response, error in
-            guard let data = data, error == nil else {
+        URLSession.shared.dataTask(with: url!, completionHandler: { data, response, error in
+            
+            guard let weatherData = data, error == nil else {
                 print("Something didn't happen")
                 return
             }
             
             do {
-                let weather = try JSONDecoder().decode( DataClass.self, from: data)
-                DispatchQueue.main.async {
-//                    self.table.reloadData()
-                    print("\(weather)")
-//                    self!.weatherModel = [weather]
+                if let weather = try? JSONDecoder().decode( Apitesting.self, from: weatherData) {
+                    DispatchQueue.main.async {
+//                        self.weatherModel = [weather]
+//    //                    self.table.reloadData()
+//                        print("\(weather.results)")
+//                        dump(weather.results)
+//    //                    self!.weatherModel = [weather]
+                    }
                 }
+//                completionHandler(weather,nil)
+                
             } catch {
                 print("Error: \(error)")
             }
@@ -107,6 +110,22 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
 
 }
+
+struct Apitesting: Codable{
+    let count: Float
+    let next: String?
+    let previous: String?
+    let results: [ApitestingInfo]
+}
+
+struct ApitestingInfo: Codable{
+    let id: Float
+    let player_name: String
+    let age: Float
+    let games: Float
+    let games_started: Float
+}
+
 
 struct Weather: Codable {
     let data: DataClass
