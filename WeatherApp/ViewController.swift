@@ -12,7 +12,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     @IBOutlet var table: UITableView!
     
-    var weatherModel = [Apitesting]()
+    var weatherModel = [dogApiTest]()
     let locationManager = CLLocationManager()
     var currentLocations: CLLocation?
     
@@ -50,42 +50,72 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         let lat = currentLocations.coordinate.latitude
 
 //    https://api.tomorrow.io/v4/timelines?location=40.75872069597532,-73.98529171943665&fields=temperature&timesteps=1h&units=metric&apikey=fm3FfjFr9iuu6ZQ3PrsBi5NdBkQ700EL
-    let url = URL(string: "https://nba-stats-db.herokuapp.com/api/playerdata/name/JaysonTatum")
+   let urlString = "https://dog.ceo/api/breeds/image/random"
         
+//        "https://api.tomorrow.io/v4/timelines?location=40.75872069597532,-73.98529171943665&fields=temperature&timesteps=1h&units=metric&apikey=fm3FfjFr9iuu6ZQ3PrsBi5NdBkQ700EL"
         
-//        "https://api.tomorrow.io/v4/timelines?location=\(lat),\(long)&fields=temperature&timesteps=1h&units=metric&apikey=fm3FfjFr9iuu6ZQ3PrsBi5NdBkQ700EL"
+        guard let url = URL(string: urlString) else {
+            print("Issues with URL")
+            return
+        }
         
-        URLSession.shared.dataTask(with: url!, completionHandler: { data, response, error in
+        let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
             
-            guard let weatherData = data, error == nil else {
-                print("Something didn't happen")
+            guard let data = data, error == nil else {
+                print(error?.localizedDescription ?? "unsure of error description")
                 return
             }
             
             do {
-                if let weather = try? JSONDecoder().decode( Apitesting.self, from: weatherData) {
+                let json = try JSONDecoder().decode(dogApiTest.self, from: data)
+//                DispatchQueue.global().async {
                     DispatchQueue.main.async {
+                        dump(json)
+                        dump(dogApiTest.self)
+                        
+                }
+            } catch {
+                print(error)
+            }
+        }
+            task.resume()
+    
+//      "https://api.tomorrow.io/v4/timelines?location=\(lat),\(long)&fields=temperature&timesteps=1h&units=metric&apikey=fm3FfjFr9iuu6ZQ3PrsBi5NdBkQ700EL"
+//        let urlRequest = URLRequest(url: url!)
+    
+        
+//        URLSession.shared.dataTask(with: urlRequest) { data, response, error in
+//
+////        }
+//
+//            guard let weatherData = data, error == nil else {
+//                print("Something didn't happen")
+//                return
+//            }
+//
+//            do {
+//                 let weather = try JSONDecoder().decode( Weather.self, from: weatherData)
+//                    DispatchQueue.main.async {
 //                        self.weatherModel = [weather]
 //    //                    self.table.reloadData()
-//                        print("\(weather.results)")
-//                        dump(weather.results)
+//                        print("\(weather)")
+//                        dump(weather)
 //    //                    self!.weatherModel = [weather]
-                    }
-                }
-//                completionHandler(weather,nil)
-                
-            } catch {
-                print("Error: \(error)")
-            }
-            
-            
-            guard let error = error else {
-                print("Error: \(error)")
-                return
-            }
-            
-          
-        }).resume()
+//                    }
+////                completionHandler(weather,nil)
+//
+//            } catch {
+//                print("Error: \(error)")
+//            }
+//
+//
+//            guard let error = error else {
+//                print("Error: \(error)")
+//                return
+//            }
+//
+//
+//        }.resume()
         
     }
 
@@ -111,42 +141,33 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
 }
 
-struct Apitesting: Codable{
-    let count: Float
-    let next: String?
-    let previous: String?
-    let results: [ApitestingInfo]
+struct dogApiTest: Codable{
+    let message: String
+    let status: String
 }
 
-struct ApitestingInfo: Codable{
-    let id: Float
-    let player_name: String
-    let age: Float
-    let games: Float
-    let games_started: Float
-}
 
 
 struct Weather: Codable {
-    let data: DataClass
+    let data: DataClass?
 }
 
 struct DataClass: Codable {
-    let timelines: [Timeline]
+    let timelines: [Timeline]?
 }
 
 struct Timeline: Codable {
-    let timestep: String
-    let endTime: String
-    let startTime: String
-    let intervals: [IntervalsWeather]
+    let timestep: String?
+    let endTime: String?
+    let startTime: String?
+    let intervals: [IntervalsWeather]?
 }
 
 struct IntervalsWeather: Codable {
-    let startTime: String
-    let values: [TemperatureWeather]
+    let startTime: String?
+    let values: [TemperatureWeather]?
 }
 
     struct TemperatureWeather: Codable {
-    let temperature: Float
+    let temperature: Float?
 }
