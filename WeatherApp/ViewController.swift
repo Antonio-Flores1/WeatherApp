@@ -66,8 +66,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             do {
                 let json = try JSONDecoder().decode(Weather.self, from: data)
                     DispatchQueue.main.async {
-                        dump(json.timelines)
-                        dump(Weather.self)
+//                        dump(json.timelines)
+//                        dump(Weather.self)
                 }
             } catch {
                 print(error)
