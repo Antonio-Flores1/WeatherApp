@@ -66,8 +66,8 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
             do {
                 let json = try JSONDecoder().decode(Weather.self, from: data)
                     DispatchQueue.main.async {
-//                        dump(json.timelines)
-//                        dump(Weather.self)
+                        dump(json)
+                        dump(Weather.self)
                 }
             } catch {
                 print(error)
@@ -101,14 +101,31 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
 
 
 struct Weather: Codable {
-    let timelines: Weatherhourly?
+    var timelines: Weatherhourly?
 }
 
 struct Weatherhourly: Codable {
-    let hourly: [WeatherData]?
+    var hourly: [WeatherData]?
 }
 
 struct WeatherData: Codable {
-    let time: String?
-    let values: String?
+    var time: String?
+    var values: Valuesdata
+}
+
+struct Valuesdata: Codable {
+    var cloudBase: Float?
+    var cloudCeiling: Float?
+    var cloudCover: Float
+    var dewPoint: Float
+    var evapotranspiration: Float
+    var freezingRainIntensity: Int
+    var humidity: Float
+    var iceAccumulation: Int?
+    var iceAccumulationLwe: Float?
+    var precipitationProbability: Int
+    var pressureSurfaceLevel: Float
+    var rainAccumulation: Float
+    var rainAccumulationLwe: Float?
+    var rainIntensity: Float
 }
